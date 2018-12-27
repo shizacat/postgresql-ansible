@@ -1,0 +1,44 @@
+---
+- name: Install repository
+  yum:
+    name:
+      - "{{ yum_repository_url_centos }}"
+    state: present
+  when: ansible_distribution == 'CentOS'
+
+- name: Install
+  yum:
+    name:
+      - "postgresql{{ postgresql_version.split('.')[0] }}"
+      - "postgresql{{ postgresql_version.split('.')[0] }}-server"
+    state: present
+  when:
+    - ansible_pkg_mgr == 'yum'
+    - ansible_distribution == 'CentOS'
+
+- name: Check data directory is not empty
+  find:
+    paths: "/var/lib/pgsql/{{ postgresql_version.split('.')[0] }}/data"
+  register: tmp_pg_data_directory_is_empty
+  when: ansible_distribution == 'CentOS'
+ 
+- name: InitDB
+  shell: /usr/pgsql-{{ postgresql_version.split('.')[0] }}/bin/postgresql-{{ postgresql_version.split('.')[0] }}-setup initdb
+  when:
+    - postgresql_initdb == true
+    - ansible_distribution == 'CentOS'
+    - tmp_pg_data_directory_is_empty.matched|int == 0
+
+- name: Service start and enable (systemd)
+  systemd:
+    name: postgresql-{{ postgresql_version.split('.')[0] }}
+    state: started
+    enabled: yes
+  when: ansible_distribution == 'CentOS'
+
+# --- Addons
+- name: Include a cube
+  include: cube.yml
+  when:
+    - pg_cube_build == true
+    - ansible_distribution == 'CentOS'

@@ -1,0 +1,75 @@
+---
+# Increase count dimenshion in the cube extenshion
+- name: Add package if version 11 or above | Cube
+  set_fact:
+    pg_cube_package_need: "{{ pg_cube_package_need + pg_cube_package_need_v11 }}"
+  when:
+    - postgresql_version.split('.')[0]|int >= 11
+
+- name: Enable repository | Cube
+  yum:
+    name:
+      - centos-release-scl
+      - epel-release
+
+- name: Install package dependens | Cube
+  yum:
+    name: "{{ pg_cube_package_need }}"
+    state: present
+
+- name: Install posgresql header | Cube
+  yum:
+    name:
+      - "postgresql{{ postgresql_version.split('.')[0] }}-devel"
+    state: present
+
+- name: Creates directory for source | Cube
+  file:
+    path: /build
+    state: directory
+
+- name: Download source | Cube
+  get_url:
+    url: "{{ source_bz2_url }}"
+    dest: /build/
+    checksum: 'sha256:{{ source_bz2_sha256_url }}'
+
+- name: Extract source | Cube
+  unarchive:
+    src: "/build/{{ source_bz2_url| basename }}"
+    dest: /build
+    remote_src: yes
+
+- name: Change dimenshion | Cube
+  replace:
+    path: /build/postgresql-{{ postgresql_version }}/contrib/cube/cubedata.h
+    regexp: '\#define CUBE_MAX_DIM \(100\)'
+    replace: '#define CUBE_MAX_DIM ({{ pg_cube.dimenshion }})'
+    backup: yes
+
+- name: Make | Cube
+  make:
+    chdir: /build/postgresql-{{ postgresql_version }}/contrib/cube/
+  become: yes
+  environment:
+    USE_PGXS: true
+    PATH: "{{ ansible_env.PATH }}:/usr/pgsql-{{ postgresql_version.split('.')[0] }}/bin/"
+    # PG_CONFIG: /usr/pgsql-{{ postgresql_version.split('.')[0] }}/bin/pg_config
+    C_INCLUDE_PATH: "/usr/pgsql-{{ postgresql_version.split('.')[0] }}/include/"
+
+- name: Make install | Cube
+  make:
+    chdir: /build/postgresql-{{ postgresql_version }}/contrib/cube/
+    target: install
+  become: yes
+  environment:
+    USE_PGXS: true
+    PATH: "{{ ansible_env.PATH }}:/usr/pgsql-{{ postgresql_version.split('.')[0] }}/bin/"
+    C_INCLUDE_PATH: "/usr/pgsql-{{ postgresql_version.split('.')[0] }}/include/"
+  notify:
+    - Postgresql restart
+
+- name: Clean package dependens | Cube
+  yum:
+    name: "{{ pg_cube_package_need }}"
+    state: absent
