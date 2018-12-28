@@ -12,11 +12,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     server.vm.hostname = "server"
     config.vm.provision "ansible" do |ansible|
        ansible.playbook = "playbook.yml"
-       ansible.extra_vars = {
-          postgresql_version: "11.1",
-          pg_cube_build: true
-          # "pg_cube.dimenshion": 350
-       }
     end
   end
 

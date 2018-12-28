@@ -3,6 +3,8 @@ Postgresql - роль для ansible
 
 Устанавливает сервер postgresql.
 
+Есть еще вот такая штука: https://github.com/galaxyproject/ansible-postgresql
+
 Требования
 ----------
 

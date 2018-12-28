@@ -3,5 +3,15 @@
   hosts: all
   user: vagrant
   sudo: true
+  vars:
+    postgresql_version: '10.6'
+    postgresql_conf:
+      - option: listen_addresses
+        value: "'0.0.0.0'"
+      - option: max_connections
+        value: 50
+    # pg_cube_build: true
+    # pg_cube:
+    #   dimenshion: 350
   roles:
     - postgresql

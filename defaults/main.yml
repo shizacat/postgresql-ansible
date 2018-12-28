@@ -5,6 +5,11 @@ postgresql_version: "10.6"
 # Need create db
 postgresql_initdb: true
 
+# === Config
+postgresql_conf:
+  - option: listen_addresses
+    value: "''"
+
 # === Cube
 pg_cube_build: false
 pg_cube:
@@ -22,8 +27,3 @@ pg_cube_package_need_v11:
   - llvm-toolset-7
   # - epel-release
   - llvm5.0
-
-# === define
-yum_repository_url_centos: "https://download.postgresql.org/pub/repos/yum/{{ postgresql_version.split('.')[0] }}/redhat/rhel-{{ ansible_distribution_version.split('.')[0] }}-x86_64/pgdg-centos{{ postgresql_version.split('.')[0] }}-{{ postgresql_version.split('.')[0] }}-2.noarch.rpm"
-source_bz2_url: "https://ftp.postgresql.org/pub/source/v{{ postgresql_version }}/postgresql-{{ postgresql_version }}.tar.bz2"
-source_bz2_sha256_url: "https://ftp.postgresql.org/pub/source/v{{ postgresql_version }}/postgresql-{{ postgresql_version }}.tar.bz2.sha256"

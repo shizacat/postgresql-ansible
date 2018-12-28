@@ -1,2 +1,5 @@
 ---
-# vars file for postgresql
+# === define RedHat
+yum_repository_url_centos: "https://download.postgresql.org/pub/repos/yum/{{ postgresql_version.split('.')[0] }}/redhat/rhel-{{ ansible_distribution_version.split('.')[0] }}-x86_64/pgdg-centos{{ postgresql_version.split('.')[0] }}-{{ postgresql_version.split('.')[0] }}-2.noarch.rpm"
+source_bz2_url: "https://ftp.postgresql.org/pub/source/v{{ postgresql_version }}/postgresql-{{ postgresql_version }}.tar.bz2"
+source_bz2_sha256_url: "https://ftp.postgresql.org/pub/source/v{{ postgresql_version }}/postgresql-{{ postgresql_version }}.tar.bz2.sha256"
