@@ -1,4 +1,16 @@
 ---
+# Sets postgresql_conf_dir
+- include_vars: "{{ ansible_os_family | lower }}.yml"
+
+- name: Set conf dir fact
+  set_fact: postgresql_conf_dir={{ postgresql_conf_dir_default }}
+  when: postgresql_conf_dir is not defined
+
+- name: Set data dir fact
+  set_fact: postgresql_pgdata={{ postgresql_pgdata_default }}
+  when: postgresql_pgdata is not defined
+
+# Install
 - name: Install repository
   yum:
     name:
@@ -9,8 +21,8 @@
 - name: Install
   yum:
     name:
-      - "postgresql{{ postgresql_version.split('.')[0] }}"
-      - "postgresql{{ postgresql_version.split('.')[0] }}-server"
+      - "postgresql{{ postgresql_pk_number }}"
+      - "postgresql{{ postgresql_pk_number }}-server"
     state: present
   when:
     - ansible_pkg_mgr == 'yum'
@@ -18,12 +30,12 @@
 
 - name: Check data directory is not empty
   find:
-    paths: "/var/lib/pgsql/{{ postgresql_version.split('.')[0] }}/data"
+    paths: "{{ postgresql_pgdata }}"
   register: tmp_pg_data_directory_is_empty
   when: ansible_distribution == 'CentOS'
  
 - name: InitDB
-  shell: /usr/pgsql-{{ postgresql_version.split('.')[0] }}/bin/postgresql-{{ postgresql_version.split('.')[0] }}-setup initdb
+  shell: "{{ postgresql_setup }} initdb"
   when:
     - postgresql_initdb == true
     - ansible_distribution == 'CentOS'
@@ -31,17 +43,10 @@
 
 - name: Service start and enable (systemd)
   systemd:
-    name: postgresql-{{ postgresql_version.split('.')[0] }}
+    name: "{{ postgresql_service_name }}"
     state: started
     enabled: yes
   when: ansible_distribution == 'CentOS'
-
-# Sets postgresql_conf_dir
-- include_vars: "{{ ansible_os_family | lower }}.yml"
-
-- name: Set conf dir fact
-  set_fact: postgresql_conf_dir={{ postgresql_conf_dir_default }}
-  when: postgresql_conf_dir is not defined
 
 # --- Configuration (postgresql.conf)
 - name: Configure global settings (postgresql.conf).

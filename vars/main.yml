@@ -1,5 +1,37 @@
 ---
 # === define RedHat
-yum_repository_url_centos: "https://download.postgresql.org/pub/repos/yum/{{ postgresql_version.split('.')[0] }}/redhat/rhel-{{ ansible_distribution_version.split('.')[0] }}-x86_64/pgdg-centos{{ postgresql_version.split('.')[0] }}-{{ postgresql_version.split('.')[0] }}-2.noarch.rpm"
-source_bz2_url: "https://ftp.postgresql.org/pub/source/v{{ postgresql_version }}/postgresql-{{ postgresql_version }}.tar.bz2"
-source_bz2_sha256_url: "https://ftp.postgresql.org/pub/source/v{{ postgresql_version }}/postgresql-{{ postgresql_version }}.tar.bz2.sha256"
+
+# Номер в пакете
+postgresql_pk_number: "{% if postgresql_version | float <= 9.6 %}{{ postgresql_version.split('.')[0] }}{{ postgresql_version.split('.')[1] }}\
+{% else %}{{ postgresql_version.split('.')[0] }}{% endif %}"
+
+yum_repository_url_centos: "https://download.postgresql.org/pub/repos/yum/\
+{% if postgresql_version | float <= 9.6 %}{{ postgresql_version }}{% else %}{{ postgresql_version.split('.')[0] }}{% endif %}\
+/redhat/\
+rhel-{{ ansible_distribution_version.split('.')[0] }}-x86_64/\
+{% if postgresql_version | float <= 9.6 %}pgdg-centos{{ postgresql_version.split('.')[0] }}{{ postgresql_version.split('.')[1] }}-{{ postgresql_version }}-3.noarch.rpm\
+{% else %}pgdg-centos{{ postgresql_version.split('.')[0] }}-{{ postgresql_version.split('.')[0] }}-2.noarch.rpm\
+{% endif %}"
+
+# Only for 9.6
+postgresql_build_number: "11"
+
+source_bz2_url: "https://ftp.postgresql.org/pub/source/v\
+{% if postgresql_version | float <= 9.6 %}{{ postgresql_version }}.{{ postgresql_build_number }}\
+{% else %}{{ postgresql_version }}\
+{% endif %}\
+/postgresql-\
+{% if postgresql_version | float <= 9.6 %}{{ postgresql_version }}.{{ postgresql_build_number }}\
+{% else %}{{ postgresql_version }}\
+{% endif %}\
+.tar.bz2"
+
+source_bz2_sha256_url: "https://ftp.postgresql.org/pub/source/v\
+{% if postgresql_version | float <= 9.6 %}{{ postgresql_version }}.{{ postgresql_build_number }}\
+{% else %}{{ postgresql_version }}\
+{% endif %}\
+/postgresql-\
+{% if postgresql_version | float <= 9.6 %}{{ postgresql_version }}.{{ postgresql_build_number }}\
+{% else %}{{ postgresql_version }}\
+{% endif %}\
+.tar.bz2.sha256"

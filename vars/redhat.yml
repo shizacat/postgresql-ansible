@@ -1,4 +1,29 @@
 ---
-postgresql_conf_dir_default: /var/lib/pgsql/{{ postgresql_version.split('.')[0] }}/data
-# postgresql_pgdata_default: /var/lib/pgsql/{{ postgresql_version }}/data
-# postgresql_service_name: postgresql-{{ postgresql_version }}
+postgresql_conf_dir_default: "/var/lib/pgsql/\
+{% if postgresql_version | float <= 9.6 %}{{ postgresql_version }}\
+{% else %}{{ postgresql_version.split('.')[0] }}\
+{% endif %}\
+/data"
+
+postgresql_pgdata_default: "/var/lib/pgsql/\
+{% if postgresql_version | float <= 9.6 %}{{ postgresql_version }}\
+{% else %}{{ postgresql_version.split('.')[0] }}\
+{% endif %}\
+/data"
+
+# Место куда установлен
+postgresql_path_place: "/usr/pgsql-\
+{% if postgresql_version | float <= 9.6 %}{{ postgresql_version }}\
+{% else %}{{ postgresql_version.split('.')[0] }}\
+{% endif %}"
+
+postgresql_setup: "{{ postgresql_path_place }}/bin/\
+{% if postgresql_version | float <= 9.6 %}postgresql{{ postgresql_version.split('.')[0] }}{{ postgresql_version.split('.')[1] }}\
+{% else %}postgresql-{{ postgresql_version.split('.')[0] }}\
+{% endif %}\
+-setup"
+
+postgresql_service_name: "postgresql-\
+{% if postgresql_version | float <= 9.6 %}{{ postgresql_version }}\
+{% else %}{{ postgresql_version.split('.')[0] }}\
+{% endif %}"

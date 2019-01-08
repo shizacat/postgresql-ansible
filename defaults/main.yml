@@ -8,7 +8,7 @@ postgresql_initdb: true
 # === Config
 postgresql_conf:
   - option: listen_addresses
-    value: "''"
+    value: "'0.0.0.0'"
 
 # === Cube
 pg_cube_build: false

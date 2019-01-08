@@ -3,4 +3,4 @@
   systemd:
     state: restarted
     daemon_reload: yes
-    name: postgresql-{{ postgresql_version.split('.')[0] }}
+    name: "{{ postgresql_service_name }}"

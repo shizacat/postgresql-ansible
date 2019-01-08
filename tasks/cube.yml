@@ -20,7 +20,7 @@
 - name: Install posgresql header | Cube
   yum:
     name:
-      - "postgresql{{ postgresql_version.split('.')[0] }}-devel"
+      - "postgresql{{ postgresql_pk_number }}-devel"
     state: present
 
 - name: Creates directory for source | Cube
@@ -42,30 +42,30 @@
 
 - name: Change dimenshion | Cube
   replace:
-    path: /build/postgresql-{{ postgresql_version }}/contrib/cube/cubedata.h
+    path: /build/{{ ((source_bz2_url| basename | splitext)[0] | splitext)[0] }}/contrib/cube/cubedata.h
     regexp: '\#define CUBE_MAX_DIM \(100\)'
     replace: '#define CUBE_MAX_DIM ({{ pg_cube.dimenshion }})'
     backup: yes
 
 - name: Make | Cube
   make:
-    chdir: /build/postgresql-{{ postgresql_version }}/contrib/cube/
+    chdir: /build/{{ ((source_bz2_url| basename | splitext)[0] | splitext)[0] }}/contrib/cube/
   become: yes
   environment:
     USE_PGXS: true
-    PATH: "{{ ansible_env.PATH }}:/usr/pgsql-{{ postgresql_version.split('.')[0] }}/bin/"
+    PATH: "{{ ansible_env.PATH }}:{{ postgresql_path_place }}/bin/"
     # PG_CONFIG: /usr/pgsql-{{ postgresql_version.split('.')[0] }}/bin/pg_config
-    C_INCLUDE_PATH: "/usr/pgsql-{{ postgresql_version.split('.')[0] }}/include/"
+    C_INCLUDE_PATH: "{{ postgresql_path_place }}/include/"
 
 - name: Make install | Cube
   make:
-    chdir: /build/postgresql-{{ postgresql_version }}/contrib/cube/
+    chdir: /build/{{ ((source_bz2_url| basename | splitext)[0] | splitext)[0] }}/contrib/cube/
     target: install
   become: yes
   environment:
     USE_PGXS: true
-    PATH: "{{ ansible_env.PATH }}:/usr/pgsql-{{ postgresql_version.split('.')[0] }}/bin/"
-    C_INCLUDE_PATH: "/usr/pgsql-{{ postgresql_version.split('.')[0] }}/include/"
+    PATH: "{{ ansible_env.PATH }}:{{ postgresql_path_place }}/bin/"
+    C_INCLUDE_PATH: "{{ postgresql_path_place }}/include/"
   notify:
     - Postgresql restart
 

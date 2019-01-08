@@ -1,16 +1,16 @@
-Postgresql - роль для ansible
+Postgresql - role for ansible
 =========
 
-Устанавливает сервер postgresql.
+Installs server postgresql.
 
-Есть еще вот такая штука: https://github.com/galaxyproject/ansible-postgresql
+There is such a thing: https://github.com/galaxyproject/ansible-postgresql
 
 Требования
 ----------
 
-Поддерживаемые ОС: CentOS7
+Support OS: CentOS7
 
-Проверено для версий: Postgresql: 10.6, 11.1
+Checked for Postgresql version: 9.6, 10.6, 11.1
 
 License
 -------
