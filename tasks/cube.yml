@@ -12,6 +12,12 @@
       - centos-release-scl
       - epel-release
 
+- name: Install package dependens default | Cube
+  yum:
+    name:
+      - bzip2
+    state: present
+
 - name: Install package dependens | Cube
   yum:
     name: "{{ pg_cube_package_need }}"
