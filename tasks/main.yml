@@ -23,6 +23,7 @@
     name:
       - "postgresql{{ postgresql_pk_number }}"
       - "postgresql{{ postgresql_pk_number }}-server"
+      - "postgresql{{ postgresql_pk_number }}-contrib"
     state: present
   when:
     - ansible_pkg_mgr == 'yum'
