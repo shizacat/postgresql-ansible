@@ -1,5 +1,5 @@
 ---
-# Increase count dimenshion in the cube extenshion
+# Increase count dimension in the cube extenshion
 - name: Add package if version 11 or above | Cube
   set_fact:
     pg_cube_package_need: "{{ pg_cube_package_need + pg_cube_package_need_v11 }}"
@@ -46,11 +46,11 @@
     dest: /build
     remote_src: yes
 
-- name: Change dimenshion | Cube
+- name: Change dimension | Cube
   replace:
     path: /build/{{ ((source_bz2_url| basename | splitext)[0] | splitext)[0] }}/contrib/cube/cubedata.h
     regexp: '\#define CUBE_MAX_DIM \(100\)'
-    replace: '#define CUBE_MAX_DIM ({{ pg_cube.dimenshion }})'
+    replace: '#define CUBE_MAX_DIM ({{ pg_cube.dimension }})'
     backup: yes
 
 - name: Make | Cube

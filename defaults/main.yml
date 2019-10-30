@@ -13,7 +13,7 @@ postgresql_conf:
 # === Cube
 pg_cube_build: false
 pg_cube:
-  dimenshion: 128
+  dimension: 128
 
 # Packeges list that are needed for to build
 pg_cube_package_need:

@@ -12,6 +12,6 @@
         value: 50
     pg_cube_build: true
     # pg_cube:
-    #   dimenshion: 350
+    #   dimension: 350
   roles:
     - postgresql
