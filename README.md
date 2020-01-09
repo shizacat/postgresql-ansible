@@ -10,7 +10,7 @@ Requirements
 
 Support OS: CentOS7
 
-Checked for Postgresql version: 9.6, 10.6, 11.1
+Checked for Postgresql version: 9.6, 10.6, 11.1, 11.6
 
 ### Feature
 
