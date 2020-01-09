@@ -10,7 +10,9 @@ yum_repository_url_centos: "https://download.postgresql.org/pub/repos/yum/\
 /redhat/\
 rhel-{{ ansible_distribution_version.split('.')[0] }}-x86_64/\
 {% if postgresql_version | float <= 9.6 %}pgdg-centos{{ postgresql_version.split('.')[0] }}{{ postgresql_version.split('.')[1] }}-{{ postgresql_version }}-3.noarch.rpm\
-{% else %}pgdg-centos{{ postgresql_version.split('.')[0] }}-{{ postgresql_version.split('.')[0] }}-2.noarch.rpm\
+{% elif postgresql_version.split('.')[0] | int == 11 %}\
+pgdg-centos{{ postgresql_version.split('.')[0] }}-{{ postgresql_version.split('.')[0] }}-2.noarch.rpm\
+{% else %}pgdg-redhat-repo-latest.noarch.rpm\
 {% endif %}"
 
 # Only for 9.6
