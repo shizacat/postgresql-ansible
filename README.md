@@ -15,6 +15,7 @@ Checked for Postgresql version: 9.6, 10.6, 11.1, 11.6, 12.1
 ### Feature
 
 - Supports the Cube extension with different dimension
+- It is possible to specify the default settings for the cluster (locale)
 
 License
 -------

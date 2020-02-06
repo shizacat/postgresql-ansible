@@ -4,6 +4,8 @@ postgresql_version: "10.6"
 
 # Need create db
 postgresql_initdb: true
+# Params for init_db, Example: "--locale 'ru_RU.UTF-8'"
+postgresql_initdb_params: ""
 
 # === Config
 postgresql_conf:

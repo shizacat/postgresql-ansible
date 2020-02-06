@@ -37,6 +37,8 @@
  
 - name: InitDB
   shell: "{{ postgresql_setup }} initdb"
+  environment:
+    PGSETUP_INITDB_OPTIONS: "{{ postgresql_initdb_params }}"
   when:
     - postgresql_initdb == true
     - ansible_distribution == 'CentOS'
