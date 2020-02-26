@@ -10,7 +10,8 @@
         value: "'0.0.0.0'"
       - option: max_connections
         value: 50
-    pg_cube_build: true
+    # postgresql_initdb_params: "--locale 'ru_RU.UTF-8'"
+    pg_cube_build: false
     # pg_cube:
     #   dimension: 350
   roles:
