@@ -44,13 +44,6 @@
     - ansible_distribution == 'CentOS'
     - tmp_pg_data_directory_is_empty.matched|int == 0
 
-- name: Service start and enable (systemd)
-  systemd:
-    name: "{{ postgresql_service_name }}"
-    state: started
-    enabled: yes
-  when: ansible_distribution == 'CentOS'
-
 # --- Configuration (postgresql.conf)
 - name: Configure global settings (postgresql.conf).
   lineinfile:
@@ -60,6 +53,13 @@
     state: "{{ item.state | default('present') }}"
   with_items: "{{ postgresql_conf }}"
   notify: Postgresql restart
+
+- name: Service start and enable (systemd)
+  systemd:
+    name: "{{ postgresql_service_name }}"
+    state: started
+    enabled: yes
+  when: ansible_distribution == 'CentOS'
 
 # --- Addons
 - name: Include a cube

@@ -10,7 +10,9 @@ Requirements
 
 Support OS: CentOS7
 
-Checked for Postgresql version: 9.6, 10.6, 11.1, 11.6, 12.1
+Checked for Postgresql version: 9.6, 10.6, 11.1, 11.6, 11.7, 12.1
+
+Ansible: 2.7.1
 
 ### Feature
 
