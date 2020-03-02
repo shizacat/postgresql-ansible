@@ -4,14 +4,12 @@
   user: vagrant
   become: true
   vars:
-    postgresql_version: '10.6'
+    postgresql_version: '11.7'
     postgresql_conf:
       - option: listen_addresses
         value: "'0.0.0.0'"
       - option: max_connections
         value: 50
-      - option: port
-        value: 15432
     # postgresql_initdb_params: "--locale 'ru_RU.UTF-8'"
     pg_cube_build: false
     # pg_cube:
