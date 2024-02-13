@@ -5,15 +5,9 @@
 postgresql_pk_number: "{% if postgresql_version | float <= 9.6 %}{{ postgresql_version.split('.')[0] }}{{ postgresql_version.split('.')[1] }}\
 {% else %}{{ postgresql_version.split('.')[0] }}{% endif %}"
 
-yum_repository_url_centos: "https://download.postgresql.org/pub/repos/yum/\
-{% if postgresql_version | float <= 9.6 %}{{ postgresql_version }}{% else %}{{ postgresql_version.split('.')[0] }}{% endif %}\
-/redhat/\
-rhel-{{ ansible_distribution_version.split('.')[0] }}-x86_64/\
-{% if postgresql_version | float <= 9.6 %}pgdg-centos{{ postgresql_version.split('.')[0] }}{{ postgresql_version.split('.')[1] }}-{{ postgresql_version }}-3.noarch.rpm\
-{% elif postgresql_version.split('.')[0] | int == 11 %}\
-pgdg-centos{{ postgresql_version.split('.')[0] }}-{{ postgresql_version.split('.')[0] }}-2.noarch.rpm\
-{% else %}pgdg-redhat-repo-latest.noarch.rpm\
-{% endif %}"
+yum_repository_url_centos: "https://download.postgresql.org/pub/repos/yum/reporpms/\
+EL-{{ ansible_distribution_major_version }}-x86_64/\
+pgdg-redhat-repo-latest.noarch.rpm"
 
 # Only for 9.6
 postgresql_build_number: "11"
