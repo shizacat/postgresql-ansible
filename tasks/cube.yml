@@ -56,7 +56,6 @@
 - name: Make | Cube
   make:
     chdir: /build/{{ ((source_bz2_url| basename | splitext)[0] | splitext)[0] }}/contrib/cube/
-  become: yes
   environment:
     USE_PGXS: true
     PATH: "{{ ansible_env.PATH }}:{{ postgresql_path_place }}/bin/"
@@ -67,7 +66,6 @@
   make:
     chdir: /build/{{ ((source_bz2_url| basename | splitext)[0] | splitext)[0] }}/contrib/cube/
     target: install
-  become: yes
   environment:
     USE_PGXS: true
     PATH: "{{ ansible_env.PATH }}:{{ postgresql_path_place }}/bin/"

@@ -33,10 +33,10 @@ Shorcuts:
 ```bash
 molecule list
 
-# Only create
 molecule create
-#
 molecule converge
+molecule converge -s cube
+molecule destroy
 ```
 
 License

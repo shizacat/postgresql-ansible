@@ -10,6 +10,11 @@
   set_fact: postgresql_pgdata={{ postgresql_pgdata_default }}
   when: postgresql_pgdata is not defined
 
+- name: PostgreSQL | Centos7, Update CA
+  ansible.builtin.include_tasks:
+    file: centos7_certificate_update.yml
+  when: ansible_distribution == 'CentOS'
+
 - name: PostgreSQL | Prepea, add repository
   yum:
     name:
@@ -20,7 +25,6 @@
 - name: PostgreSQL | Prepea
   yum:
     name:
-      - "ca-certificates"
       - "perl"
       - "libzstd-devel"
     state: present
