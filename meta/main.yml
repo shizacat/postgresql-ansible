@@ -1,6 +1,8 @@
 galaxy_info:
   author: Alexey Matveev
-  description: Deploy PostgreSQL 
+  description: Deploy PostgreSQL
+  role_name: postgresql
+  namespace: shizacat
    
   license: MIT
   

@@ -1,0 +1,21 @@
+---
+- name: Converge
+  hosts: all
+  # become: true
+  gather_facts: true
+  tasks:
+    - name: "Install PostgreSQL"
+      ansible.builtin.include_role:
+        name: "postgresql-ansible"
+  
+  vars:
+    postgresql_version: '15'
+    postgresql_conf:
+      - option: listen_addresses
+        value: "'0.0.0.0'"
+      - option: max_connections
+        value: 50
+    # postgresql_initdb_params: "--locale 'ru_RU.UTF-8'"
+    pg_cube_build: false
+    # pg_cube:
+    #   dimension: 350

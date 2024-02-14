@@ -10,9 +10,17 @@
   set_fact: postgresql_pgdata={{ postgresql_pgdata_default }}
   when: postgresql_pgdata is not defined
 
+# Update PGP Keys
+# On 3 January 2024 we published new repository RPMs which include new GPG keys,
+# and also will sign all of the packages with the new keys.
+# https://yum.postgresql.org/news/pgdg-rpm-repo-gpg-key-update/
+# - name: PostgreSQL | Update PGP keys
+  # yum --disablerepo=* -y install https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+
 # Install
 - name: Install repository
   yum:
+    disable_gpg_check: "True"
     name:
       - "{{ yum_repository_url_centos }}"
     state: present

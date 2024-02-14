@@ -1,0 +1,20 @@
+---
+driver:
+  name: podman
+platforms:
+  - name: CentOS7
+    image: centos:centos7
+    #quay.io/centos/centos:centos7
+    #centos:centos7 
+    # quay.io/centos/centos:centos7
+    #quay.io/centos/centos:stream8
+    pre_build_image: true
+
+provisioner:
+  name: ansible
+  log: true
+  # env:
+  #   ANSIBLE_ROLES_PATH: "../"
+  playbooks:
+    converge: converge.yml
+    # verify: verify.yml
