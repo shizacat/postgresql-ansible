@@ -22,6 +22,12 @@ Ansible: 2.7.1
 Development
 -----------
 
+```bash
+python3 -m venv .venv
+. ./.venv/bin/activate
+pip install ansible molecule molecule-plugins[docker]
+```
+
 Shorcuts:
 
 ```bash
