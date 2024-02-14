@@ -3,7 +3,7 @@ driver:
   name: docker
   #  podman
 platforms:
-  - name: CentOS7
+  - name: centos-7
     image: centos:centos7
     #quay.io/centos/centos:centos7
     # pre_build_image: true
