@@ -1,10 +1,14 @@
 ---
-- name: apply common configuration to all nodes
+- name: Converge
   hosts: all
-  user: vagrant
-  become: true
+  gather_facts: true
+  tasks:
+    - name: "Install PostgreSQL"
+      ansible.builtin.include_role:
+        name: "postgresql-ansible"
+  
   vars:
-    postgresql_version: '11.7'
+    postgresql_version: '15.6'
     postgresql_conf:
       - option: listen_addresses
         value: "'0.0.0.0'"
@@ -14,5 +18,3 @@
     pg_cube_build: false
     # pg_cube:
     #   dimension: 350
-  roles:
-    - postgresql

@@ -10,9 +10,35 @@
   set_fact: postgresql_pgdata={{ postgresql_pgdata_default }}
   when: postgresql_pgdata is not defined
 
+- name: PostgreSQL | Centos7, Update CA
+  ansible.builtin.include_tasks:
+    file: centos7_certificate_update.yml
+  when: ansible_distribution == 'CentOS'
+
+- name: PostgreSQL | Prepea, add repository
+  yum:
+    name:
+      - https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    state: present
+  when: ansible_distribution == 'CentOS'
+
+- name: PostgreSQL | Prepea
+  yum:
+    name:
+      - "perl"
+      - "libzstd-devel"
+    state: present
+  when: ansible_distribution == 'CentOS'
+
+# Update PGP Keys
+# On 3 January 2024 we published new repository RPMs which include new GPG keys,
+# and also will sign all of the packages with the new keys.
+# https://yum.postgresql.org/news/pgdg-rpm-repo-gpg-key-update/
+
 # Install
 - name: Install repository
   yum:
+    disable_gpg_check: "True"
     name:
       - "{{ yum_repository_url_centos }}"
     state: present

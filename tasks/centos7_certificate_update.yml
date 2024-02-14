@@ -1,0 +1,13 @@
+---
+  - name: CentOS7 Cert | update ca
+    yum:
+      name:
+        - "ca-certificates"
+        - "openssl"
+      state: present
+
+  - name: CentOS7 Cert | Fix Let's Encrypt root ca
+    ansible.builtin.shell: trust dump --filter "pkcs11:id=%c4%a7%b1%a4%7b%2c%71%fa%db%e1%4b%90%75%ff%c4%15%60%85%89%10" | openssl x509 | tee /etc/pki/ca-trust/source/blacklist/DST-Root-CA-X3.pem
+  
+  - name: CentOS7 Cert | update ca trust
+    ansible.builtin.shell: update-ca-trust extract

@@ -1,0 +1,19 @@
+---
+- name: ConvergeCube
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: "Install PostgreSQL. With Cube"
+      ansible.builtin.include_role:
+        name: "postgresql-ansible"
+  
+  vars:
+    postgresql_version: '15.6'
+    postgresql_conf:
+      - option: listen_addresses
+        value: "'0.0.0.0'"
+      - option: max_connections
+        value: 50
+    pg_cube_build: true
+    pg_cube:
+      dimension: 350
