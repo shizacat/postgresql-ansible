@@ -1,33 +1,10 @@
 ---
-# === define RedHat
 
-# Номер в пакете
-postgresql_pk_number: "{% if postgresql_version | float <= 9.6 %}{{ postgresql_version.split('.')[0] }}{{ postgresql_version.split('.')[1] }}\
-{% else %}{{ postgresql_version.split('.')[0] }}{% endif %}"
+# maps ansible_* to the pgdg repository package name
+postgresql_pgdg_families:
+  # default: redhat
+  Fedora: fedora
 
-yum_repository_url_centos: "https://download.postgresql.org/pub/repos/yum/reporpms/\
-EL-{{ ansible_distribution_major_version }}-x86_64/\
-pgdg-redhat-repo-latest.noarch.rpm"
-
-# Only for 9.6
-postgresql_build_number: "11"
-
-source_bz2_url: "https://ftp.postgresql.org/pub/source/v\
-{% if postgresql_version | float <= 9.6 %}{{ postgresql_version }}.{{ postgresql_build_number }}\
-{% else %}{{ postgresql_version }}\
-{% endif %}\
-/postgresql-\
-{% if postgresql_version | float <= 9.6 %}{{ postgresql_version }}.{{ postgresql_build_number }}\
-{% else %}{{ postgresql_version }}\
-{% endif %}\
-.tar.bz2"
-
-source_bz2_sha256_url: "https://ftp.postgresql.org/pub/source/v\
-{% if postgresql_version | float <= 9.6 %}{{ postgresql_version }}.{{ postgresql_build_number }}\
-{% else %}{{ postgresql_version }}\
-{% endif %}\
-/postgresql-\
-{% if postgresql_version | float <= 9.6 %}{{ postgresql_version }}.{{ postgresql_build_number }}\
-{% else %}{{ postgresql_version }}\
-{% endif %}\
-.tar.bz2.sha256"
+postgresql_pgdg_shortfamilies:
+  # default: EL
+  Fedora: F

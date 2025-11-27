@@ -1,0 +1,95 @@
+---
+# Sets postgresql_conf_dir
+- include_vars: "{{ ansible_os_family | lower }}.yml"
+
+- name: Set conf dir fact
+  set_fact: postgresql_conf_dir={{ postgresql_conf_dir_default }}
+  when: postgresql_conf_dir is not defined
+
+- name: Set data dir fact
+  set_fact: postgresql_pgdata={{ postgresql_pgdata_default }}
+  when: postgresql_pgdata is not defined
+
+- name: PostgreSQL | Centos7, Update CA
+  ansible.builtin.include_tasks:
+    file: centos7_certificate_update.yml
+  when: ansible_distribution == 'CentOS'
+
+- name: PostgreSQL | Prepea, add repository
+  yum:
+    name:
+      - https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    state: present
+  when: ansible_distribution == 'CentOS'
+
+- name: PostgreSQL | Prepea
+  yum:
+    name:
+      - "perl"
+      - "libzstd-devel"
+    state: present
+  when: ansible_distribution == 'CentOS'
+
+# Update PGP Keys
+# On 3 January 2024 we published new repository RPMs which include new GPG keys,
+# and also will sign all of the packages with the new keys.
+# https://yum.postgresql.org/news/pgdg-rpm-repo-gpg-key-update/
+
+# Install
+- name: Install repository
+  yum:
+    disable_gpg_check: "True"
+    name:
+      - "{{ yum_repository_url_centos }}"
+    state: present
+  when: ansible_distribution == 'CentOS'
+
+- name: Install
+  yum:
+    name:
+      - "postgresql{{ postgresql_pk_number }}"
+      - "postgresql{{ postgresql_pk_number }}-server"
+      - "postgresql{{ postgresql_pk_number }}-contrib"
+    state: present
+  when:
+    - ansible_pkg_mgr == 'yum'
+    - ansible_distribution == 'CentOS'
+
+- name: Check data directory is not empty
+  find:
+    paths: "{{ postgresql_pgdata }}"
+  register: tmp_pg_data_directory_is_empty
+  when: ansible_distribution == 'CentOS'
+ 
+- name: InitDB
+  shell: "{{ postgresql_setup }} initdb"
+  environment:
+    PGSETUP_INITDB_OPTIONS: "{{ postgresql_initdb_params }}"
+  when:
+    - postgresql_initdb == true
+    - ansible_distribution == 'CentOS'
+    - tmp_pg_data_directory_is_empty.matched|int == 0
+
+# --- Configuration (postgresql.conf)
+- name: Configure global settings (postgresql.conf).
+  lineinfile:
+    dest: "{{ postgresql_conf_dir }}/postgresql.conf"
+    regexp: "^#?{{ item.option }}.+$"
+    line: "{{ item.option }} = {{ item.value }}"
+    state: "{{ item.state | default('present') }}"
+  with_items: "{{ postgresql_conf }}"
+  notify: Postgresql restart
+
+- name: Service start and enable (systemd)
+  systemd:
+    name: "{{ postgresql_service_name }}"
+    state: started
+    enabled: yes
+  when: ansible_distribution == 'CentOS'
+
+# --- Addons
+- name: Include a cube
+  include: cube.yml
+  when:
+    - pg_cube_build == true
+    - ansible_distribution == 'CentOS'
