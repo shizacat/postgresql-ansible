@@ -25,6 +25,10 @@ platforms:
     # command: /usr/sbin/init
     # command: "/lib/systemd/systemd"
 
+dependency:
+  name: galaxy
+  enabled: false
+
 provisioner:
   name: ansible
   log: true

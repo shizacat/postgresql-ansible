@@ -69,6 +69,9 @@
   notify: Reload PostgreSQL
   when: postgresql_version is version('9.3', '>=')
 
+- include_tasks: ssl.yml
+  when: ansible_os_family == "Debian"
+
 - name: Set config options
   template:
     src: 25ansible_postgresql.conf.j2
