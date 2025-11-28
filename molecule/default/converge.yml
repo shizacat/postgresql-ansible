@@ -2,19 +2,155 @@
 - name: Converge
   hosts: all
   gather_facts: true
-  tasks:
-    - name: "Install PostgreSQL"
-      ansible.builtin.include_role:
-        name: "postgresql-ansible"
-  
+  roles:
+    - role: postgresql-ansible
+
   vars:
-    postgresql_version: '15.6'
+    postgresql_flavor: pgdg
+    postgresql_version: "18"
+
+    postgresql_config_upload_ssl_crt:
+      - src: ssl/certs/test.crt
+        dest: "{{ postgresql_conf_dir }}/ssl"
+        backup: false
+
+    postgresql_config_upload_ssl_key:
+      - src: ssl/keys/test.key
+        dest: "{{ postgresql_conf_dir }}/ssl"
+        backup: false
+
     postgresql_conf:
-      - option: listen_addresses
-        value: "'0.0.0.0'"
-      - option: max_connections
-        value: 50
-    # postgresql_initdb_params: "--locale 'ru_RU.UTF-8'"
-    pg_cube_build: false
-    # pg_cube:
-    #   dimension: 350
+      # CONNECTIONS AND AUTHENTICATION
+      #--------------------------------
+
+      # Connection Settings
+      - listen_addresses: "*"
+      - port: 5432
+      - max_connections: 10000
+
+      # SSL
+      - ssl: on
+      - ssl_ca_file: 'ssl/root.crt' # переопраделить по феншую
+      - ssl_cert_file: 'ssl/server.crt' # переопраделить по феншую
+      - ssl_key_file: 'ssl/server.key' # переопраделить по феншую
+
+      
+      # RESOURCE USAGE (except WAL)
+      #-----------------------------
+
+      # Memory
+      - shared_buffers: 64000MB # ? Может в GB и на VM 20Gb всего
+      - maintenance_work_mem: 2GB
+      - dynamic_shared_memory_type: posix
+
+
+      # WRITE-AHEAD LOG
+      #-----------------
+
+      # Settings
+      - wal_level: logical
+      - synchronous_commit: local
+
+      # Checkpoints
+      - max_wal_size: 4GB
+      - min_wal_size: 80MB
+
+      # Archiving
+      - archive_mode: on
+      - archive_command: 'test ! -f /mnt/psql_archiv/%f && cp %p /mnt/psql_archiv/%f'
+      - archive_timeout: 60
+
+
+      # REPLICATION
+      #-------------
+
+      # Sending Servers
+      - max_wal_senders: 10
+      - wal_keep_segments: 100
+
+      # Master Server
+
+      # Standby Servers
+      - promote_trigger_file: '/tmp/promotedb'
+      - hot_standby: on
+
+
+      # QUERY TUNING
+      #--------------
+
+      # Planner Cost Constants
+      - effective_cache_size: 192000MB
+
+
+      # REPORTING AND LOGGING
+      #-----------------------
+
+      # Where to Log
+      - log_destination: 'syslog'
+      - logging_collector: on
+      - log_directory: '/var/log/postgres'
+      - log_filename: 'postgresql-%a.log'
+      - log_truncate_on_rotation: on
+      - log_rotation_age: 1d
+      - log_rotation_size: 0
+
+      # When to Log
+      - log_min_duration_statement: 60000
+
+      # What to Log
+      - log_line_prefix: '%m [%p] [%d] [%u] [%h] '
+      - log_timezone: 'Europe/Moscow'
+
+
+      # CLIENT CONNECTION DEFAULTS
+      #----------------------------
+
+      # Locale and Formatting
+      - datestyle: 'iso, mdy'
+      - timezone: 'Europe/Moscow'
+      - lc_messages: 'en_US.UTF-8'
+      - lc_monetary: 'en_US.UTF-8'
+      - lc_numeric: 'en_US.UTF-8'
+      - lc_time: 'en_US.UTF-8'
+      - default_text_search_config: 'pg_catalog.english'
+
+      # Shared Library Preloading
+      # ITINFR-8918 09.01.24 by Bazdyrev ==========
+      - shared_preload_libraries: 'pg_stat_statements'
+      - pg_stat_statements.max: 10000
+      - pg_stat_statements.track: all
+      # ===========================================
+
+
+
+    postgresql_pg_hba_conf:
+      # "local" is for Unix domain socket connections only
+      - local all all peer
+      # IPv4 local connections:
+      - host all all 127.0.0.1/32 ident
+      # IPv6 local connections:
+      - host all all ::1/128 ident
+      # ----
+      - host all all 0.0.0.0/0 md5
+      # Allow replication connections from localhost, by a user with the
+      # replication privilege.
+      - local replication all peer
+      - host replication all 127.0.0.1/32 ident
+      - host replication all ::1/128 ident
+      - host replication replicator 0.0.0.0/0 md5
+
+      - host all zabbix 127.0.0.1/32 trust
+      - host all zabbix 0.0.0.0/0 md5
+      - host all zabbix ::0/0 md5
+
+    # # By Alexey Matveev
+    # postgresql_version: '15.6'
+    # postgresql_conf:
+    #   - option: listen_addresses
+    #     value: "'0.0.0.0'"
+    #   - option: max_connections
+    #     value: 50
+    # # postgresql_initdb_params: "--locale 'ru_RU.UTF-8'"
+    # pg_cube_build: false
+    # # pg_cube:
+    # #   dimension: 350

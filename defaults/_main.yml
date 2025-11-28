@@ -1,0 +1,31 @@
+---
+# The version of postgresql to be installed
+postgresql_version: "10.6"
+
+# Need create db
+postgresql_initdb: true
+# Params for init_db, Example: "--locale 'ru_RU.UTF-8'"
+postgresql_initdb_params: ""
+
+# === Config
+postgresql_conf:
+  - option: listen_addresses
+    value: "'0.0.0.0'"
+
+# === Cube
+pg_cube_build: false
+pg_cube:
+  dimension: 128
+
+# Packeges list that are needed for to build
+pg_cube_package_need:
+  - gcc
+  - gcc-c++
+  - make
+
+# Packege for version 11
+pg_cube_package_need_v11:
+  # - centos-release-scl
+  - llvm-toolset-7
+  # - epel-release
+  - llvm5.0
